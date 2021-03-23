@@ -50,9 +50,9 @@ const storeUser = (username, passwordHash) => {
 
 /* ENDOF DB and BCRYPT */
 
-const authRoutes = require('./routes/authRoutes');
+// const authRoutes = require('./routes/auth/router');
 
-const PORT = 5000;
+const PORT = 8000;
 const TOKEN_SECRET = 'e4193e393dd4735fa17c18de1c5069b82ec7593541f53cb4e08122d95a8d6f68dc607c54dc44834b78a5a1057fca384c1837a8c392e4c1a'
 
 function generateAccessToken(username) {
@@ -82,51 +82,11 @@ app.use(express.json())
 
 // Routes
 
-app.get('/login', (req, res) => {
-  const { username, password } = req.body;
-  res.json({})
-})
-
-app.get('/signup', (req, res) => {
-
-})
-
 app.post('/login', (req, res) => {
   const { username, password } = req.body;
-
-  const token = generateAccessToken(username);
-  res.json(token)
-})
-
-app.post('/signup', (req, res) => {
-  const { username, password } = req.body;
-  const response = {
-    error: null,
-  }
-
-  // Hash user password
-  bcrypt.hash(password, saltRounds, (err, hash) => {
-    if (err) {
-      console.log(err);
-      response.error = err;
-    }
-    // Store user into db
-    storeUser(username, hash);
-  })
-
-  // Response with no errors, or with db error
-  // const token = generateAccessToken(username);
-  res.json(response)
-})
-
-app.post('/logout', (req, res) => {
-
-})
-
-app.get('/secret', authenticateToken, (req, res) => {
-  const response = {
-    error: null,
-    data: 'two plus two is four'
+  let response = {token: null};
+  if (username === 'admin' && password === 'admin') {
+    response = {token: 'sometoken'}
   }
   res.send(response)
 })
