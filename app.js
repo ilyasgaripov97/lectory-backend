@@ -32,7 +32,6 @@ const checkUser = async (username, password) => {
     user = await pool.query(query);
     if (user.rowCount === 0) return Promise.reject('Such user does not exist.') 
     try {
-      
       const result = await bcrypt.compare(password, user.rows[0].password_hash);
       return result;
     } catch(bcryptError) {
@@ -42,8 +41,6 @@ const checkUser = async (username, password) => {
   } catch (queryError) {
     console.log('Query error: ' + queryError);
   }
-
-
 }
 
 
@@ -54,18 +51,22 @@ const checkUser = async (username, password) => {
 const PORT = 8000;
 const TOKEN_SECRET = 'e4193e393dd4735fa17c18de1c5069b82ec7593541f53cb4e08122d95a8d6f68dc607c54dc44834b78a5a1057fca384c1837a8c392e4c1a'
 
-function generateAccessToken(username) {
-  return jwt.sign({ username }, TOKEN_SECRET, { expiresIn: "1h"})
+function generateAccessToken(user, username) {
+  // TODO отправить id на клиент
+  const id_user = user.rows[0].id;
+  return jwt.sign({ id_user , username }, TOKEN_SECRET, { expiresIn: "1h"})
 }
 
 // Middlewares
 app.use(cors())
+app.use(express.urlencoded())
 app.use(express.json())
 // app.use(authRoutes)
 
 // Routes
 app.post('/signup', async (req, res) => {
   const { username, password } = req.body;
+
 
   try {
     const hashedPassword = await bcrypt.hash(password, saltRounds);
@@ -80,7 +81,10 @@ app.post('/signup', async (req, res) => {
 
 app.post('/login', async (req, res) => {
   const { username, password } = req.body;
-  const token = generateAccessToken(username)
+
+  user = await pool.query('SELECT id FROM a_user WHERE username = $1', [username,]);
+
+  const token = generateAccessToken(user, username)
 
   let response = {};
 
@@ -95,7 +99,52 @@ app.post('/login', async (req, res) => {
     res.send({error})
   }
 
+})
 
+const setPreferences = async (id_user, preferences) => {
+  const query = {
+    text: `INSERT INTO a_preferences (id_user, hide_materials) VALUES ($1, $2) on conflict (id_user) do update set hide_materials = $2`,
+    values: [id_user, preferences.hide_materials]
+  }
+  try {
+    await pool.query(query);
+  } catch(error) {
+    console.log(error);
+  }
+}
+
+const fetchCurrentPreferences = async (id_user) => {
+
+  const query = {
+    text: "SELECT * FROM a_preferences WHERE id_user = $1",
+    values: [id_user]
+  }
+  try {
+    const data = await pool.query(query);
+    console.log(data.rows[0]);
+    return data.rows[0];
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+app.post('/user/:id_user/preferences', async(req, res) => {
+  const id_user = req.params.id_user;
+  const preferences = req.body;
+  
+  await setPreferences(id_user, preferences);
+
+  res.send({})
+})
+
+app.get('/user/:id_user/preferences', async (req, res) => {
+  const id_user = req.params.id_user;
+  const response = { data: null, error: null }
+  try {
+    response.data = await fetchCurrentPreferences(id_user)
+  } catch (error) {
+  }
+  res.send(response)
 })
 
 
