@@ -98,7 +98,6 @@ app.post('/login', async (req, res) => {
     console.log('Credentials are incorrect: ' + error);
     res.send({error})
   }
-
 })
 
 const setPreferences = async (id_user, preferences) => {
@@ -121,7 +120,6 @@ const fetchCurrentPreferences = async (id_user) => {
   }
   try {
     const data = await pool.query(query);
-    console.log(data.rows[0]);
     return data.rows[0];
   } catch (error) {
     console.log(error);
@@ -146,6 +144,67 @@ app.get('/user/:id_user/preferences', async (req, res) => {
   }
   res.send(response)
 })
+
+const createMaterial = async (id_user, material) => {
+  const query = {
+    text: `INSERT INTO a_material (title, preview_image_path, body, created_at, id_user) VALUES
+    ($1, $2, $3, $4, $5);`,
+    values: [material.title, material.preview_image_path, material.body, material.created_at, id_user]
+  }
+  try {
+    await pool.query(query);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+const fetchMaterials = async (id_user) => {
+  //  WHERE id_user = $1
+  // values: [id_user]
+  const query = {
+    text: "SELECT * FROM a_material", 
+  }
+  try {
+    const result = await pool.query(query);
+    return await result.rows;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+// Список материалов для пользователя
+app.get('/user/:id_user/materials', async (req, res) => {
+  const id_user = req.params.id_user;
+  let response = {
+    data: null, 
+    error: null,
+  }
+  try {
+    response.data = await fetchMaterials(id_user);
+  } catch (error) {
+    console.log(error);
+  }
+  res.send(response)
+});
+
+// Создание нового материал
+app.post('/user/:id_user/materials/new', async (req, res) => {
+  const id_user = req.params.id_user;
+  const material = req.body.material;
+
+  console.log(req.body.material);
+
+  const response = { data: null, error: null };
+
+  try {
+    await createMaterial(id_user, material)
+    response.data = "200";
+  } catch (error) {
+    console.log(error);
+    response.error = error
+  }
+  res.send(response)
+});
 
 
 app.listen(PORT, () => {
