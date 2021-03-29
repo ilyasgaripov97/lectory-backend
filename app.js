@@ -52,7 +52,6 @@ const PORT = 8000;
 const TOKEN_SECRET = 'e4193e393dd4735fa17c18de1c5069b82ec7593541f53cb4e08122d95a8d6f68dc607c54dc44834b78a5a1057fca384c1837a8c392e4c1a'
 
 function generateAccessToken(user, username) {
-  // TODO отправить id на клиент
   const id_user = user.rows[0].id;
   return jwt.sign({ id_user , username }, TOKEN_SECRET, { expiresIn: "1h"})
 }
@@ -166,7 +165,7 @@ const fetchMaterials = async (id_user) => {
   }
   try {
     const result = await pool.query(query);
-    return await result.rows;
+    return result.rows;
   } catch (error) {
     console.log(error);
   }
