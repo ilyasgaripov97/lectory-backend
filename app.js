@@ -66,23 +66,6 @@ app.get('/user/:id_user/preferences', async (req, res) => {
   res.send(response)
 })
 
-// Список материалов для пользователя
-// app.get('/user/:id_user/materials', async (req, res) => {
-//   const id_user = req.params.id_user;
-//   let response = {
-//     data: null, 
-//     error: null,
-//   }
-//   try {
-//     response.data = await fetchMaterials(id_user);
-//   } catch (error) {
-//     console.log(error);
-//   }
-//   res.send(response)
-// });
-
-// Создание нового материал
-
 
 app.listen(PORT, () => {
   console.log(`Server running at: http://localhost:${PORT}`);
