@@ -21,51 +21,6 @@ app.use(homepageRoutes)
 
 // Routes
 
-const setPreferences = async (id_user, preferences) => {
-  const query = {
-    text: `INSERT INTO a_preferences (id_user, hide_materials) VALUES ($1, $2) on conflict (id_user) do update set hide_materials = $2`,
-    values: [id_user, preferences.hide_materials]
-  }
-  try {
-    await pool.query(query);
-  } catch(error) {
-    console.log(error);
-  }
-}
-
-const fetchCurrentPreferences = async (id_user) => {
-
-  const query = {
-    text: "SELECT * FROM a_preferences WHERE id_user = $1",
-    values: [id_user]
-  }
-  try {
-    const data = await pool.query(query);
-    return data.rows[0];
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-app.post('/user/:id_user/preferences', async(req, res) => {
-  const id_user = req.params.id_user;
-  const preferences = req.body;
-  
-  await setPreferences(id_user, preferences);
-
-  res.send({})
-})
-
-app.get('/user/:id_user/preferences', async (req, res) => {
-  const id_user = req.params.id_user;
-  const response = { data: null, error: null }
-  try {
-    response.data = await fetchCurrentPreferences(id_user)
-  } catch (error) {
-  }
-  res.send(response)
-})
-
 
 app.listen(PORT, () => {
   console.log(`Server running at: http://localhost:${PORT}`);
