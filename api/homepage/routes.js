@@ -9,6 +9,7 @@ router.post('/user/:id_user/materials/new', async (req, res) => {
   const material = req.body.material;
 
   const response = { data: null, error: null };
+  console.log(req.file, req.bodyuser);
 
   try {
     await HomepageService.createMaterial(id_user, material)
@@ -25,12 +26,13 @@ router.get('/user/:id_user/materials', async (req, res) => {
     let response = {}
     try {
       response.data = await HomepageService.fetchMaterials(id_user);
-      console.log(response);
     } catch (error) {
       response.error = error;
     }
     res.send(response)
 });
+
+
 
 
 module.exports = router;
