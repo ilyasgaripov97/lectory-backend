@@ -7,7 +7,7 @@ class HomepageService {
     const query = {
       text: `INSERT INTO a_material (title, preview_image_path, body, created_at, id_user) VALUES
       ($1, $2, $3, $4, $5);`,
-      values: [material.title, material.preview_image_path, material.body, material.created_at, id_user]
+      values: [material.title, material.previewImagePath, material.body, material.created_at, id_user]
     }
     try {
       await pool.query(query);

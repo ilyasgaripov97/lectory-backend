@@ -6,7 +6,6 @@ const multer = require('multer');
 
 
 
-// const upload = multer({ dest: 'uploads/'})
 const storage = multer.diskStorage({
   destination: function(req, file, cb) {
     cb(null, 'public')
@@ -16,7 +15,7 @@ const storage = multer.diskStorage({
   }
 })
 
-const upload = multer({ storage: storage }).single('photo');
+const upload = multer({ storage: storage }).single('preview_image');
 
 const authRoutes = require('./api/auth/routes');
 const homepageRoutes = require('./api/homepage/routes')
@@ -34,11 +33,13 @@ app.use(authRoutes)
 app.use(homepageRoutes)
 
 app.post('/upload',  (req, res) => {
+  console.log(req.body);
   upload(req, res, (err) => {
     if (err) {
       console.log(err);
       res.sendStatus(500)
     }
+    console.log(req.file);
     res.send(req.file)
   })
 })
