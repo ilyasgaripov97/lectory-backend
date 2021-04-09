@@ -53,6 +53,7 @@ class AuthService {
     }
   } 
   static async generateToken(username) {
+    console.log('username: ' + username);
     try {
       const result = await pool.query('SELECT id FROM a_user WHERE username = $1', [username,])
       const id_user = result.rows[0].id;

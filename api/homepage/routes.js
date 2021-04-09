@@ -5,6 +5,7 @@ const HomepageService = require('../../services/hompage/service');
 
 /* temp */
 const multer = require('multer');
+const { response } = require('express');
 
 
 const storage = multer.diskStorage({
@@ -57,5 +58,17 @@ router.get('/user/:id_user/materials', async (req, res) => {
     }
     res.send(response)
 });
+
+router.post('/user/:id_user/materials/:id_material/remove', async (req, res) => {
+  const id_user = req.params.id_user;
+  const id_material = req.params.id_material;
+  console.log('post/ (remove material)', req.params, req.body);
+  try {
+    await HomepageService.removeMaterial(id_user, id_material);
+  } catch (error) {
+    console.log(error);
+    // TODO logs
+  }
+})
 
 module.exports = router;

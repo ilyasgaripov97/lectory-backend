@@ -17,7 +17,7 @@ class HomepageService {
     }
   }
   static async fetchMaterials(id_user) {
-    /* Список всех доступных материалов */
+    /* Список всех доступных материалов пользователя*/
     // TODO сделать сортировку по дате
     const query = {
       text: "SELECT * FROM a_material WHERE id_user = $1 ORDER BY id DESC;",
@@ -31,6 +31,19 @@ class HomepageService {
       return Promise.reject(error)
     }
   }
+  static async removeMaterial(id_user, id_material) {
+    /* Убирает материал из списка материалов пользователя*/
+    const query = {
+      text: "UPDATE a_material SET id_user = $1 WHERE id = $2 AND id_user = $3",
+      values: [null, id_material, id_user],
+    }
+    try {
+      await pool.query(query) 
+    }
+    catch (error) {
+      return Promise.reject(error)
+    }
+  } 
 }
 
 module.exports = HomepageService
