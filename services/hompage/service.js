@@ -43,7 +43,20 @@ class HomepageService {
     catch (error) {
       return Promise.reject(error)
     }
-  } 
+  }
+  static async fetchMaterial(id_user, id_material) {
+    /* Отдельный материал у пользователя с заданным id */
+    const query = {
+      text: "SELECT * FROM a_material WHERE id_user = $1 AND id = $2",
+      values: [id_user, id_material],
+    }
+    try {
+      const result = await pool.query(query);
+      return result.rows[0];
+    } catch (error) {
+      return Promise.reject(error)
+    }
+  }
 }
 
 module.exports = HomepageService

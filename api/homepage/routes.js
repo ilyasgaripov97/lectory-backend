@@ -69,6 +69,19 @@ router.post('/user/:id_user/materials/:id_material/remove', async (req, res) => 
     console.log(error);
     // TODO logs
   }
+});
+
+router.get('/user/:id_user/materials/:id_material', async (req, res) => {
+  const id_user = req.params.id_user;
+  const id_material = req.params.id_material;
+  let response = {}
+
+  try {
+    response.data = await HomepageService.fetchMaterial(id_user, id_material);
+  } catch (error) {
+    response.error = error;
+  }
+  res.send(response)
 })
 
-module.exports = router;
+module.exports = router;  
