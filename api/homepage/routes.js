@@ -17,6 +17,7 @@ const storage = multer.diskStorage({
   }
 })
 const upload = multer({ storage: storage }).single('preview_image');
+const uploadUpdatedImage = multer({ storage: storage }).single('updated_material_image');
 /* temp */
 
 router.post('/user/:id_user/materials/new', (req, res) => {
@@ -26,7 +27,7 @@ router.post('/user/:id_user/materials/new', (req, res) => {
     }
     const id_user = req.params.id_user;
 
-    const previewImagePath ='http://localhost:8000/' + req.file.filename
+    const previewImagePath ='http://localhost:8000/' + req.file.filename;
 
     const material = {
       title: req.body.title,
@@ -47,6 +48,26 @@ router.post('/user/:id_user/materials/new', (req, res) => {
   })
 
 });
+
+router.post('/user/:id_user/materials/:id_material/update_image', (req, res) => {
+  uploadUpdatedImage(req, res, async (err) => {
+    if (err) {
+      res.send(500);
+    }
+    
+    const { id_user, id_material } = req.params;
+    const previewImagePath = 'http://localhost:8000/' + req.file.filename;
+    const { title, body } = req.body;
+     const queryValues = [title, previewImagePath, body];
+
+    try {
+      await HomepageService.updateMaterial(id_user, id_material, queryValues)
+    } catch(error) {
+      console.log(error);
+    }
+    res.send({ imgPath: 'http://localhost:8000/' + req.file.filename})
+  })
+ })
 
 router.get('/user/:id_user/materials', async (req, res) => {
     const id_user = req.params.id_user;
@@ -82,6 +103,24 @@ router.get('/user/:id_user/materials/:id_material', async (req, res) => {
     response.error = error;
   }
   res.send(response)
+})
+
+router.post(`/user/:id_user/materials/:id_material/update`, async (req, res) => {
+  const id_user = req.params.id_user;
+  const id_material = req.params.id_material;
+  const { title, previewImagePath, body } = req.body;
+  let response = {};
+
+  const queryValues = [ title, previewImagePath, body ]
+
+  try {
+    await HomepageService.updateMaterial(id_user, id_material, queryValues)
+    response.data = 'Material succesfully updated'
+  } catch(error) {
+    response.error = error;
+  }
+
+  res.send(response);
 })
 
 module.exports = router;  

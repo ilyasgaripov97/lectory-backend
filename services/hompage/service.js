@@ -38,10 +38,10 @@ class HomepageService {
       values: [null, id_material, id_user],
     }
     try {
-      await pool.query(query) 
+      await pool.query(query);
     }
     catch (error) {
-      return Promise.reject(error)
+      return Promise.reject(error);
     }
   }
   static async fetchMaterial(id_user, id_material) {
@@ -53,6 +53,19 @@ class HomepageService {
     try {
       const result = await pool.query(query);
       return result.rows[0];
+    } catch (error) {
+      return Promise.reject(error)
+    }
+  }
+
+  static async updateMaterial(id_user, id_material, queryValues) {
+    /* Устанавливает новые значения для полей материала */
+    const query =  {
+      text: "UPDATE a_material SET title = $1, preview_image_path = $2, body = $3 WHERE id_user = $4 AND id = $5",
+      values:  [...queryValues, id_user, id_material ]
+    }
+    try {
+      await pool.query(query);
     } catch (error) {
       return Promise.reject(error)
     }
