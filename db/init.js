@@ -14,6 +14,8 @@ const createUserTable = async () => {
   }
 }
 
+
+// TODO make created_at to be 
 const createMaterialTable = async() => {
   try {
     await pool.query('DROP TABLE IF EXISTS a_material CASCADE;');

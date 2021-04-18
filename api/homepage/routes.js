@@ -26,7 +26,6 @@ router.post('/user/:id_user/materials/new', (req, res) => {
       res.sendStatus(500)
     }
     const id_user = req.params.id_user;
-    console.log(req.files);
     const previewImagePath ='http://localhost:8000/' + req.file.filename;
 
 
