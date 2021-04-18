@@ -26,8 +26,9 @@ router.post('/user/:id_user/materials/new', (req, res) => {
       res.sendStatus(500)
     }
     const id_user = req.params.id_user;
-
+    console.log(req.files);
     const previewImagePath ='http://localhost:8000/' + req.file.filename;
+
 
     const material = {
       title: req.body.title,
@@ -46,7 +47,6 @@ router.post('/user/:id_user/materials/new', (req, res) => {
     }
     res.send({ imgPath: 'http://localhost:8000/' + req.file.filename})
   })
-
 });
 
 router.post('/user/:id_user/materials/:id_material/update_image', (req, res) => {

@@ -37,7 +37,7 @@ class HomepageService {
       text: "UPDATE a_material SET id_user = $1 WHERE id = $2 AND id_user = $3",
       values: [null, id_material, id_user],
     }
-    try {
+    try {``
       await pool.query(query);
     }
     catch (error) {
