@@ -5,9 +5,12 @@ class HomepageService {
   static async createMaterial(id_user, material) {
     /* Создание нового материала для пользователя */
     const query = {
-      text: `INSERT INTO a_material (title, preview_image_path, body, created_at, id_user) VALUES
-      ($1, $2, $3, $4, $5);`,
-      values: [material.title, material.previewImagePath, material.body, material.created_at, id_user]
+      text: `INSERT INTO a_material (title, preview_image_path, body, created_at, id_user, id_category) VALUES
+      ($1, $2, $3, $4, $5, $6);`,
+      values: [
+        material.title, material.previewImagePath, material.body, material.created_at, id_user,
+        material.id_category
+      ]
     }
     try {
       await pool.query(query);
@@ -54,7 +57,7 @@ class HomepageService {
       const result = await pool.query(query);
       return result.rows[0];
     } catch (error) {
-      return Promise.reject(error)
+      return Promise.reject(error);
     }
   }
 
@@ -68,6 +71,29 @@ class HomepageService {
       await pool.query(query);
     } catch (error) {
       return Promise.reject(error)
+    }
+  }
+  static async fetchMaterial(id_user, id_material, id_category, queryValues) {
+    const query = {
+      text: "SELECT * FROM a_material WHERE id_material = $1 AND id_user = $2 AND id_category = $3",
+      values: [...queryValues, id_user, id_material, id_category]
+    }
+    try {
+      const result = await pool.query(query);
+      return result.rows[0];
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  static async suggestCategory(userInput) {
+    const sql = `SELECT * FROM a_category WHERE lower(name) LIKE '%${userInput.toLowerCase()}%';`
+    console.log(sql);
+    try {
+      const result = await pool.query(sql)
+      return result.rows[0]
+    } catch (error) {
+      console.log(error);
     }
   }
 }

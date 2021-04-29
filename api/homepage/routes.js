@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router();
 
-const HomepageService = require('../../services/hompage/service');
+const HomepageService = require('../../services/materials/service');
 
 /* temp */
 const multer = require('multer');
@@ -32,6 +32,7 @@ router.post('/user/:id_user/materials/new', (req, res) => {
     const material = {
       title: req.body.title,
       body: req.body.body,
+      category: req.body.category,
       previewImagePath,
     };
   
@@ -121,5 +122,21 @@ router.post(`/user/:id_user/materials/:id_material/update`, async (req, res) => 
 
   res.send(response);
 })
+
+router.get('/categories/suggestion/:userInput', async (req, res) => {
+
+  const { userInput } = req.params;
+  console.log('User Input', userInput);
+
+  try {
+    const categories = await HomepageService.suggestCategory(userInput)
+    console.log(categories)
+    res.json({ categories, });
+  } catch (error) {
+    console.log(error);
+  }
+})
+
+router.get('/user/:id_user/materials/:id_material/update')
 
 module.exports = router;  

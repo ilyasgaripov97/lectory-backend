@@ -18,19 +18,21 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage }).single('preview_image');
 
 const authRoutes = require('./api/auth/routes');
-const homepageRoutes = require('./api/homepage/routes')
+const homepageRoutes = require('./api/homepage/routes');
+const categoriesRoutes = require('./api/categories/routes');
 
 const PORT = 8000;
 const TOKEN_SECRET = 'e4193e393dd4735fa17c18de1c5069b82ec7593541f53cb4e08122d95a8d6f68dc607c54dc44834b78a5a1057fca384c1837a8c392e4c1a'
 
 
 // Middlewares
-app.use(cors())
-app.use(express.static('public'))
-app.use(express.urlencoded())
-app.use(express.json())
-app.use(authRoutes)
-app.use(homepageRoutes)
+app.use(cors());
+app.use(express.static('public'));
+app.use(express.urlencoded());
+app.use(express.json());
+app.use(authRoutes);
+app.use(homepageRoutes);
+app.use(categoriesRoutes);
 
 app.post('/upload',  (req, res) => {
   console.log(req.body);
@@ -42,7 +44,7 @@ app.post('/upload',  (req, res) => {
     console.log(req.file);
     res.send(req.file)
   })
-})
+});
 
 
 app.listen(PORT, () => {
