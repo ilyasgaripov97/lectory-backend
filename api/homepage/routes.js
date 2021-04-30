@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router();
 
 const HomepageService = require('../../services/materials/service');
+const CategoriesService = require('../../services/categories/service');
 
 /* temp */
 const multer = require('multer');
@@ -21,12 +22,14 @@ const uploadUpdatedImage = multer({ storage: storage }).single('updated_material
 /* temp */
 
 router.post('/user/:id_user/materials/new', (req, res) => {
+
   upload(req, res, async (err) => {
     if (err) {
       res.sendStatus(500)
     }
     const id_user = req.params.id_user;
     const previewImagePath ='http://localhost:8000/' + req.file.filename;
+    console.log(req.body);
 
 
     const material = {
@@ -39,6 +42,10 @@ router.post('/user/:id_user/materials/new', (req, res) => {
     const response = { data: null, error: null };
   
     try {
+      const category = await CategoriesService.readCategory(null, material.category);
+      const { id } = category;
+      material.id_category = id;
+
       await HomepageService.createMaterial(id_user, material)
       response.data = "200";
     } catch (error) {
@@ -123,6 +130,18 @@ router.post(`/user/:id_user/materials/:id_material/update`, async (req, res) => 
   res.send(response);
 })
 
+router.get('/user/:id_user/materials/category/:id_category', async (req, res) => {
+  const { id_user, id_category } = req.params;
+
+  try {
+    const data = await HomepageService.fetchMaterialsByCategory(id_user, id_category)
+    res.json(data)
+  } catch (error) {
+    console.log(error);
+  }
+})
+
+
 router.get('/categories/suggestion/:userInput', async (req, res) => {
 
   const { userInput } = req.params;
@@ -137,6 +156,7 @@ router.get('/categories/suggestion/:userInput', async (req, res) => {
   }
 })
 
-router.get('/user/:id_user/materials/:id_material/update')
+
+
 
 module.exports = router;  
